@@ -13,32 +13,36 @@ const info = {
 
 const servers = [
   {
-    url: '/api/',
+    url: '/api/notification/',
     description: 'Development server'
   },
   {
-    url: 'https://your-production-url.com/api/',
+    url: 'https://gateway.motorsights.com/api/notification',
     description: 'Production server'
+  },
+  {
+    url: 'https://dev-gateway.motorsights.com/api/notification',
+    description: 'Develop server'
   }
 ]
 
 // Import schemas
-const exampleSchema = require('./schema/example');
+// const exampleSchema = require('./schema/example');
 const notificationSchema = require('./schema/notification');
 
 // Import paths
-const examplePaths = require('./path/example');
+// const examplePaths = require('./path/example');
 const notificationPaths = require('./path/notification');
 
 // Combine all schemas
 const schemas = {
-  ...exampleSchema,
+  // ...exampleSchema,
   ...notificationSchema,
 };
 
 // Combine all paths
 const paths = {
-  ...examplePaths,
+  // ...examplePaths,
   ...notificationPaths,
 };
 

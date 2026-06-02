@@ -2,7 +2,7 @@
  * Notifications Router
  *
  * Mounts all notification delivery endpoints.
- * Base path: /api/v1/notifications
+ * Base path: /api/notifications
  */
 
 const express = require('express')
@@ -17,35 +17,35 @@ const {
 const { validateMiddleware } = require('../../middlewares/validation')
 
 /**
- * @route   POST /api/v1/notifications/user
+ * @route   POST /api/notifications/user
  * @desc    Send push notification to a specific user (all their active devices)
  * @access  Public
  */
 router.post('/user', sendToUserValidation, validateMiddleware, controller.sendToUser)
 
 /**
- * @route   POST /api/v1/notifications/broadcast
+ * @route   POST /api/notifications/broadcast
  * @desc    Broadcast push notification to ALL active devices
  * @access  Public
  */
 router.post('/broadcast', broadcastValidation, validateMiddleware, controller.sendBroadcast)
 
 /**
- * @route   POST /api/v1/notifications/device
+ * @route   POST /api/notifications/device
  * @desc    Send push notification to a specific device
  * @access  Public
  */
 router.post('/device', sendToDeviceValidation, validateMiddleware, controller.sendToDevice)
 
 /**
- * @route   GET /api/v1/notifications/firebase-health
+ * @route   GET /api/notifications/firebase-health
  * @desc    Check Firebase Admin SDK connection status
  * @access  Public
  */
 router.get('/firebase-health', controller.firebaseHealth)
 
 /**
- * @route   POST /api/v1/notifications/test
+ * @route   POST /api/notifications/test
  * @desc    Send a test notification directly to a raw FCM token
  * @access  Public
  */

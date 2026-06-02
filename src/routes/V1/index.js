@@ -20,12 +20,12 @@ routing.use(`${API_TAG}/examples`, exampleModule)
 
 // ─── Notification Service Modules ────────────────────────────────────────────
 
-// Device Registration — POST/DELETE /api/v1/devices/register
+// Device Registration — POST/DELETE /api/devices/register
 const devicesModule = require('../../modules/devices')
-routing.use(`${API_TAG}/v1/devices`, devicesModule)
+routing.use(`${API_TAG}/notification/devices`, devicesModule)
 
-// Push Notifications — POST /api/v1/notifications/...
+// Push Notifications — POST /api/notifications/...
 const notificationsModule = require('../../modules/notifications')
-routing.use(`${API_TAG}/v1/notifications`, notificationsModule)
+routing.use(`${API_TAG}/notification/notifications`, notificationsModule)
 
 module.exports = routing;

@@ -5,7 +5,7 @@
 const notificationPaths = {
   // ─── Devices ─────────────────────────────────────────────────────────────────
 
-  '/v1/devices/register': {
+  '/devices/register': {
     post: {
       tags: ['Devices'],
       summary: 'Register Device',
@@ -92,7 +92,7 @@ const notificationPaths = {
 
   // ─── Notifications ───────────────────────────────────────────────────────────
 
-  '/v1/notifications/user': {
+  '/notifications/user': {
     post: {
       tags: ['Notifications'],
       summary: 'Send Notification to User',
@@ -135,7 +135,7 @@ const notificationPaths = {
     },
   },
 
-  '/v1/notifications/broadcast': {
+  '/notifications/broadcast': {
     post: {
       tags: ['Notifications'],
       summary: 'Broadcast Notification to All Users',
@@ -190,7 +190,7 @@ const notificationPaths = {
     },
   },
 
-  '/v1/notifications/device': {
+  '/notifications/device': {
     post: {
       tags: ['Notifications'],
       summary: 'Send Notification to Specific Device',
@@ -239,7 +239,7 @@ const notificationPaths = {
     },
   },
 
-  '/v1/notifications/firebase-health': {
+  '/notifications/firebase-health': {
     get: {
       tags: ['Notifications'],
       summary: 'Firebase Health Check',
@@ -275,7 +275,7 @@ const notificationPaths = {
     },
   },
 
-  '/v1/notifications/test': {
+  '/notifications/test': {
     post: {
       tags: ['Notifications'],
       summary: 'Test Push Notification',
