@@ -34,5 +34,11 @@ routing.use(`${API_TAG}/notification/notifications`, notificationsModule)
 const socketModule = require('../../modules/socket')
 routing.use(`${API_TAG}/notification/socket`, socketModule)
 
+// ─── RabbitMQ Internal API ──────────────────────────────────────────────────────
+
+// Rabbit REST API — /api/notification/internal/events, /api/notification/rabbit/health
+const rabbitModule = require('../../modules/rabbit')
+routing.use(`${API_TAG}/notification`, rabbitModule)
+
 module.exports = routing;
 

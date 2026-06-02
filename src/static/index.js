@@ -30,17 +30,20 @@ const servers = [
 // const exampleSchema = require('./schema/example');
 const notificationSchema = require('./schema/notification');
 const socketSchema = require('./schema/socket');
+const rabbitSchema = require('./schema/rabbit');
 
 // Import paths
 // const examplePaths = require('./path/example');
 const notificationPaths = require('./path/notification');
 const socketPaths = require('./path/socket');
+const rabbitPaths = require('./path/rabbit');
 
 // Combine all schemas
 const schemas = {
   // ...exampleSchema,
   ...notificationSchema,
   ...socketSchema,
+  ...rabbitSchema,
 };
 
 // Combine all paths
@@ -48,6 +51,7 @@ const paths = {
   // ...examplePaths,
   ...notificationPaths,
   ...socketPaths,
+  ...rabbitPaths,
 };
 
 const index = {

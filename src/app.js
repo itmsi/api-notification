@@ -20,10 +20,13 @@ const apiV1 = require('./routes/V1')
 const { initListener } = require('./listeners')
 const { prometheusMiddleware } = require('./middlewares/prometheus')
 
+const rabbitConsumer = require('./services/rabbit/RabbitConsumer')
+
 // Conditionally initialize listeners only if RabbitMQ is enabled
 if (process.env.RABBITMQ_ENABLED === 'true' && process.env.RABBITMQ_URL && process.env.RABBITMQ_URL !== 'disabled') {
   console.log('Initializing RabbitMQ listeners...')
   initListener()
+  rabbitConsumer.start()
 } else {
   console.log('RabbitMQ not enabled or configured, skipping listener initialization')
 }
