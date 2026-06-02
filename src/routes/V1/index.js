@@ -28,4 +28,11 @@ routing.use(`${API_TAG}/notification/devices`, devicesModule)
 const notificationsModule = require('../../modules/notifications')
 routing.use(`${API_TAG}/notification/notifications`, notificationsModule)
 
+// ─── Socket.IO Management API ─────────────────────────────────────────────────
+
+// Socket REST API — /api/notification/socket/emit/user, /api/notification/socket/health, etc.
+const socketModule = require('../../modules/socket')
+routing.use(`${API_TAG}/notification/socket`, socketModule)
+
 module.exports = routing;
+

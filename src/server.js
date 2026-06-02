@@ -1,5 +1,9 @@
+const http = require('http')
 // make sure for crashing handler continues to run
 const app = require('./app')
+const { initSocket } = require('./config/socket')
+const { socketAuthMiddleware } = require('./middlewares/socketAuth')
+const { setupSocketHandlers } = require('./services/socket/socketHandler')
 
 process.on('warning', (warning) => {
   console.warn(warning.name)
@@ -32,7 +36,18 @@ process.on('SIGTERM', () => {
   console.info('SIGTERM received')
 })
 
-app.listen(process.env.APP_PORT, () => {
+const server = http.createServer(app)
+
+// Initialize Socket.IO
+const io = initSocket(server)
+
+// Apply JWT authentication middleware for Socket.IO connections
+io.use(socketAuthMiddleware)
+
+// Setup Socket.IO event handlers
+setupSocketHandlers(io)
+
+server.listen(process.env.APP_PORT, () => {
   if (process.env.NODE_ENV === 'development') {
     console.info(`${process?.env.APP_NAME} running in port ${process.env.APP_PORT}`)
   } else {

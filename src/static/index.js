@@ -29,21 +29,25 @@ const servers = [
 // Import schemas
 // const exampleSchema = require('./schema/example');
 const notificationSchema = require('./schema/notification');
+const socketSchema = require('./schema/socket');
 
 // Import paths
 // const examplePaths = require('./path/example');
 const notificationPaths = require('./path/notification');
+const socketPaths = require('./path/socket');
 
 // Combine all schemas
 const schemas = {
   // ...exampleSchema,
   ...notificationSchema,
+  ...socketSchema,
 };
 
 // Combine all paths
 const paths = {
   // ...examplePaths,
   ...notificationPaths,
+  ...socketPaths,
 };
 
 const index = {
