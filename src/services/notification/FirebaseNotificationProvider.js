@@ -21,7 +21,7 @@ class FirebaseNotificationProvider extends NotificationProvider {
   /**
    * Send notification to all active devices of a user
    */
-  async sendToUser(userId, title, message, payload = {}) {
+  async sendToUser(userId, title, message, type, payload = {}, customData = {}) {
     const devices = await pgCore('user_devices')
       .where({ user_id: userId, is_active: true })
       .whereNotNull('fcm_token')
@@ -33,7 +33,7 @@ class FirebaseNotificationProvider extends NotificationProvider {
     }
 
     const tokens = devices.map((d) => d.fcm_token)
-    return this._sendMulticast(tokens, title, message, payload)
+    return this._sendMulticast(tokens, title, message, type, payload, customData)
   }
 
   /**
@@ -113,18 +113,33 @@ class FirebaseNotificationProvider extends NotificationProvider {
   /**
    * Build a FCM message object
    */
-  _buildMessage(token, title, body, data = {}) {
+  _buildMessage(token, title, body, type, payload = {}, customData = {}) {
+    const fcmData = {
+      ...customData,
+      type,
+      screen: customData.screen || 'RoaRoaManage',
+      ...payload
+    }
+
     return {
       token,
       notification: { title, body },
-      data: this._stringifyData(data),
+      data: this._stringifyData(fcmData),
       android: {
         priority: 'high',
-        notification: { sound: 'default' },
+        notification: {
+          sound: 'default',
+          channelId: 'default', // Wajib untuk Android 8.0+
+        },
       },
       apns: {
         payload: {
-          aps: { sound: 'default', badge: 1 },
+          aps: {
+            sound: 'default',
+            badge: 1,
+            contentAvailable: true, // Membangunkan iOS app di background
+            mutableContent: true    // Mengizinkan modifikasi notifikasi
+          },
         },
       },
     }
@@ -133,19 +148,35 @@ class FirebaseNotificationProvider extends NotificationProvider {
   /**
    * Send multicast message to an array of tokens
    */
-  async _sendMulticast(tokens, title, message, payload = {}) {
+  async _sendMulticast(tokens, title, message, type, payload = {}, customData = {}) {
     const messaging = getMessaging()
+
+    const fcmData = {
+      ...customData,
+      type,
+      screen: customData?.screen || 'RoaRoaManage',
+      ...payload
+    }
+
     const multicastMessage = {
       tokens,
       notification: { title, body: message },
-      data: this._stringifyData(payload),
+      data: this._stringifyData(fcmData),
       android: {
         priority: 'high',
-        notification: { sound: 'default' },
+        notification: {
+          sound: 'default',
+          channelId: 'default', // Wajib untuk Android 8.0+
+        },
       },
       apns: {
         payload: {
-          aps: { sound: 'default', badge: 1 },
+          aps: {
+            sound: 'default',
+            badge: 1,
+            contentAvailable: true, // Membangunkan iOS app di background
+            mutableContent: true    // Mengizinkan modifikasi notifikasi
+          },
         },
       },
     }
