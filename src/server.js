@@ -1,10 +1,13 @@
-const http = require('http')
-// make sure for crashing handler continues to run
-const app = require('./app')
-const { initSocket } = require('./config/socket')
-const { socketAuthMiddleware } = require('./middlewares/socketAuth')
-const { setupSocketHandlers } = require('./services/socket/socketHandler')
+const http = require('http');
+const { Server: SocketIOServer } = require('socket.io');
+const app = require('./app');
+const { registerAISocketHandlers } = require('./modules/ai-assistant-socket');
 
+// ─── Socket.IO Namespace untuk AI Assistant ────────────────────
+const AI_SOCKET_PATH = process.env.AI_SOCKET_PATH || '/api/mosa/ai-assistant';
+const AI_SOCKET_CORS_ORIGINS = process.env.AI_SOCKET_CORS_ORIGINS || '*';
+
+// ─── Process Handlers ──────────────────────────────────────────
 process.on('warning', (warning) => {
   console.warn(warning.name)
   console.warn(warning.message)
@@ -36,16 +39,19 @@ process.on('SIGTERM', () => {
   console.info('SIGTERM received')
 })
 
-const server = http.createServer(app)
+// ─── HTTP Server dengan Socket.IO ──────────────────────────────
+const server = http.createServer(app);
 
-// Initialize Socket.IO
-const io = initSocket(server)
+const aiSocketIO = new SocketIOServer(server, {
+  path: AI_SOCKET_PATH,
+  cors: {
+    origin: AI_SOCKET_CORS_ORIGINS === '*' ? '*' : AI_SOCKET_CORS_ORIGINS.split(','),
+    methods: ['GET', 'POST'],
+  },
+  transports: ['websocket', 'polling'],
+});
 
-// Apply JWT authentication middleware for Socket.IO connections
-io.use(socketAuthMiddleware)
-
-// Setup Socket.IO event handlers
-setupSocketHandlers(io)
+registerAISocketHandlers(aiSocketIO);
 
 server.listen(process.env.APP_PORT, () => {
   if (process.env.NODE_ENV === 'development') {
