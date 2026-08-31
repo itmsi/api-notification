@@ -40,5 +40,9 @@ routing.use(`${API_TAG}/notification/socket`, socketModule)
 const rabbitModule = require('../../modules/rabbit')
 routing.use(`${API_TAG}/notification`, rabbitModule)
 
+// API Log Queue — POST /api/notification/logs (consumed by the Telegram listener)
+const logsModule = require('../../modules/logs')
+routing.use(`${API_TAG}/notification/logs`, logsModule)
+
 module.exports = routing;
 
