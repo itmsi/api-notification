@@ -22,21 +22,28 @@ const notificationProvider = new FirebaseNotificationProvider()
  *
  * @param {{ userId: string, title: string, message: string, type: string, payload?: object }} data
  */
-const sendToUser = async ({ userId, title, message, type, payload }) => {
+const sendToUser = async ({ userId, title, message, type, payload, data }) => {
   console.log(`[Notifications] sendToUser — userId: ${userId}, type: ${type}`)
 
   // 1. Persist notification record
-  const notification = await repository.saveNotification({ userId, type, title, message, payload })
+  await repository.saveNotification({ userId, type, title, message, payload })
 
   // 2. Send push via Firebase
-  const firebaseResponse = await notificationProvider.sendToUser(userId, title, message, payload)
+  await notificationProvider.sendToUser(userId, title, message, type, payload, data)
 
-  console.log(`[Notifications] Firebase response for user ${userId}:`, firebaseResponse)
-
+  // 3. Return formatted response as requested
   return {
-    success: true,
-    notification,
-    firebase: firebaseResponse,
+    notification: {
+      userId,
+      title,
+      body: message,
+      type,
+      payload: payload || {}
+    },
+    data: {
+      screen: data?.screen || "RoaRoaManage",
+      type
+    }
   }
 }
 

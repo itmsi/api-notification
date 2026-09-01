@@ -28,4 +28,21 @@ routing.use(`${API_TAG}/notification/devices`, devicesModule)
 const notificationsModule = require('../../modules/notifications')
 routing.use(`${API_TAG}/notification/notifications`, notificationsModule)
 
+// ─── Socket.IO Management API ─────────────────────────────────────────────────
+
+// Socket REST API — /api/notification/socket/emit/user, /api/notification/socket/health, etc.
+const socketModule = require('../../modules/socket')
+routing.use(`${API_TAG}/notification/socket`, socketModule)
+
+// ─── RabbitMQ Internal API ──────────────────────────────────────────────────────
+
+// Rabbit REST API — /api/notification/internal/events, /api/notification/rabbit/health
+const rabbitModule = require('../../modules/rabbit')
+routing.use(`${API_TAG}/notification`, rabbitModule)
+
+// API Log Queue — POST /api/notification/logs (consumed by the Telegram listener)
+const logsModule = require('../../modules/logs')
+routing.use(`${API_TAG}/notification/logs`, logsModule)
+
 module.exports = routing;
+

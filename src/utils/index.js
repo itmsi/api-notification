@@ -14,6 +14,7 @@ const pdf = require('./pdf')
 const publish = require('./publish')
 const excel = require('./excel')
 const standardQuery = require('./standard_query')
+const telegram = require('./telegram')
 
 module.exports = {
   ...constant,
@@ -31,5 +32,6 @@ module.exports = {
   ...pdf,
   ...publish,
   ...excel,
-  ...standardQuery
+  ...standardQuery,
+  ...telegram
 }

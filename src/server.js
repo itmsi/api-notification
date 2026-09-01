@@ -1,6 +1,13 @@
-// make sure for crashing handler continues to run
-const app = require('./app')
+const http = require('http');
+const { Server: SocketIOServer } = require('socket.io');
+const app = require('./app');
+const { registerAISocketHandlers } = require('./modules/ai-assistant-socket');
 
+// ─── Socket.IO Namespace untuk AI Assistant ────────────────────
+const AI_SOCKET_PATH = process.env.AI_SOCKET_PATH || '/api/mosa/ai-assistant';
+const AI_SOCKET_CORS_ORIGINS = process.env.AI_SOCKET_CORS_ORIGINS || '*';
+
+// ─── Process Handlers ──────────────────────────────────────────
 process.on('warning', (warning) => {
   console.warn(warning.name)
   console.warn(warning.message)
@@ -32,7 +39,21 @@ process.on('SIGTERM', () => {
   console.info('SIGTERM received')
 })
 
-app.listen(process.env.APP_PORT, () => {
+// ─── HTTP Server dengan Socket.IO ──────────────────────────────
+const server = http.createServer(app);
+
+const aiSocketIO = new SocketIOServer(server, {
+  path: AI_SOCKET_PATH,
+  cors: {
+    origin: AI_SOCKET_CORS_ORIGINS === '*' ? '*' : AI_SOCKET_CORS_ORIGINS.split(','),
+    methods: ['GET', 'POST'],
+  },
+  transports: ['websocket', 'polling'],
+});
+
+registerAISocketHandlers(aiSocketIO);
+
+server.listen(process.env.APP_PORT, () => {
   if (process.env.NODE_ENV === 'development') {
     console.info(`${process?.env.APP_NAME} running in port ${process.env.APP_PORT}`)
   } else {

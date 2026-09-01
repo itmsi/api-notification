@@ -13,13 +13,13 @@ exports.up = async (knex) => {
     table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'))
 
     // Optional FK to users table — comment out if users table not yet present
-    table
-      .uuid('user_id')
-      .nullable()
-      .references('id')
-      .inTable('users')
-      .onDelete('CASCADE')
-
+    // table
+    //   .uuid('user_id')
+    //   .nullable()
+    //   .references('id')
+    //   .inTable('users')
+    //   .onDelete('CASCADE')
+    table.uuid('user_id').nullable()
     table.string('device_id', 255).nullable()
     table.string('platform', 50).nullable().comment('android | ios | web')
     table.text('fcm_token').nullable()

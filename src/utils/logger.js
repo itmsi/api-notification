@@ -7,35 +7,35 @@ const generateFolderLogs = (dynamicFolder, path) => {
   const date = today.getDate()
   const folderPath = `./${dynamicFolder}/${path}/${year}/${month}/${date}/`
   const pathForDatabase = `${dynamicFolder}/${path}/${year}/${month}/${date}/`
-  try {
-    if (!fs.existsSync(folderPath)) {
-      console.log('generated folder');
-      fs.mkdirSync(folderPath, { recursive: true, mode: 0o755 })
-      return {
-        pathForDatabase,
-        folderPath
-      }
-    }
-    return {
-      pathForDatabase,
-      folderPath
-    }
-  } catch (error) {
-    console.log(error)
-    return error
+  if (!fs.existsSync(folderPath)) {
+    console.log('generated folder');
+    fs.mkdirSync(folderPath, { recursive: true, mode: 0o755 })
+  }
+  return {
+    pathForDatabase,
+    folderPath
   }
 }
+
+// No-op writable used when the log file/folder can't be created (e.g. read-only
+// filesystem), so callers can still call `.write()` without crashing the process.
+const noopWriter = { write: () => true }
 
 const logger = (fileName, type) => {
   try {
     const { folderPath } = generateFolderLogs('logs', type)
     const finalPath = `${__dirname}/../../${folderPath}/${fileName}`
-    return fs.createWriteStream(finalPath, {
+    const stream = fs.createWriteStream(finalPath, {
       flags: 'a',
       mode: 0o755
     })
+    stream.on('error', (error) => {
+      console.error('Failed to write to log file:', error)
+    })
+    return stream
   } catch (error) {
-    return error
+    console.error('Failed to prepare log file:', error)
+    return noopWriter
   }
 }
 

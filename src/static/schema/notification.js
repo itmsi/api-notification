@@ -178,25 +178,24 @@ const notificationSchemas = {
   NotificationSentResponse: {
     type: 'object',
     properties: {
-      success: { type: 'boolean', example: true },
       notification: {
         type: 'object',
         properties: {
-          id: { type: 'string', format: 'uuid', example: '123e4567-e89b-12d3-a456-426614174000' },
-          user_id: { type: 'string', nullable: true, example: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' },
-          type: { type: 'string', example: 'APPROVAL' },
+          userId: { type: 'string', example: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' },
           title: { type: 'string', example: 'Approval' },
-          message: { type: 'string', example: 'Your request has been approved' },
-          payload: { type: 'object', nullable: true },
-          is_read: { type: 'boolean', example: false },
-          created_at: { type: 'string', format: 'date-time', example: '2026-06-01T10:00:00.000Z' },
+          body: { type: 'string', example: 'Your request has been approved' },
+          type: { type: 'string', example: 'APPROVAL' },
+          payload: { 
+            type: 'object', 
+            example: { orderId: '12345', status: 'approved' }
+          },
         },
       },
-      firebase: {
+      data: {
         type: 'object',
         properties: {
-          successCount: { type: 'integer', example: 1 },
-          failureCount: { type: 'integer', example: 0 },
+          screen: { type: 'string', example: 'RoaRoaManage' },
+          type: { type: 'string', example: 'APPROVAL' },
         },
       },
     },

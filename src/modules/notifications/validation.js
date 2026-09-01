@@ -42,6 +42,11 @@ const sendToUserValidation = [
     .optional()
     .isObject()
     .withMessage('payload must be an object'),
+
+  body('data')
+    .optional()
+    .isObject()
+    .withMessage('data must be an object'),
 ]
 
 /**

@@ -12,8 +12,8 @@ const service = require('./service')
  */
 const sendToUser = async (req, res) => {
   try {
-    const { userId, title, message, type, payload } = req.body
-    const result = await service.sendToUser({ userId, title, message, type, payload })
+    const { userId, title, message, type, payload, data } = req.body
+    const result = await service.sendToUser({ userId, title, message, type, payload, data })
 
     return res.status(200).json(result)
   } catch (error) {

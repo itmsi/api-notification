@@ -13,13 +13,13 @@ exports.up = async (knex) => {
     table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'))
 
     // Optional FK to users table — nullable for broadcast notifications
-    table
-      .uuid('user_id')
-      .nullable()
-      .references('id')
-      .inTable('users')
-      .onDelete('SET NULL')
-
+    // table
+    //   .uuid('user_id')
+    //   .nullable()
+    //   .references('id')
+    //   .inTable('users')
+    //   .onDelete('SET NULL')
+    table.uuid('user_id').nullable()
     table.string('type', 100).notNullable().comment('e.g. APPROVAL, SYSTEM, BROADCAST')
     table.string('title', 255).notNullable()
     table.text('message').notNullable()

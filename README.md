@@ -228,6 +228,159 @@ Untuk menambah SocketIO provider:
 
 ---
 
+## Realtime Infrastructure (Socket.IO)
+
+Sprint 2 menambahkan infrastruktur komunikasi dua arah realtime menggunakan **Socket.IO** yang berjalan berdampingan dengan layanan push notification Firebase.
+
+### Fitur Socket.IO
+- **JWT Authentication**: Setiap koneksi Socket.IO wajib menyertakan token JWT yang valid.
+- **Connection Tracking**: Menggunakan registry in-memory untuk melacak socket aktif per user (mendukung multi-device/multi-koneksi per user).
+- **User Room**: Sockets otomatis masuk ke room individual `user:${userId}` saat berhasil terhubung.
+- **Socket Emit API**: REST API internal untuk melakukan push event ke user tertentu atau broadcast ke semua user secara langsung.
+
+### Konfigurasi Environment (.env)
+```env
+# Port aplikasi
+APP_PORT=9521
+
+# Socket.IO CORS Origins (koma-terpisah untuk multiple origins)
+SOCKET_CORS_ORIGINS=http://localhost:3000,http://localhost:19006
+
+# Secret key untuk verifikasi JWT
+JWT_SECRET=dev-super-secret-jwt-key-for-development-only
+```
+
+### Endpoint Management API
+
+| Method | Endpoint | Deskripsi |
+|--------|----------|-----------|
+| `POST` | `/socket/emit/user` | Mengirim realtime event ke room milik user tertentu |
+| `POST` | `/socket/emit/broadcast` | Mengirim realtime event ke seluruh client yang terkoneksi |
+| `GET` | `/socket/online-users` | Mendapatkan daftar user ID yang saat ini sedang online |
+| `GET` | `/socket/health` | Mendapatkan statistik jumlah socket dan user yang terhubung |
+
+---
+
+### Contoh cURL Socket API
+
+#### 1. Cek Health & Statistik Koneksi
+```bash
+curl http://localhost:9521/api/notification/socket/health
+```
+**Response:**
+```json
+{
+  "success": true,
+  "connectedUsers": 0,
+  "totalSockets": 0
+}
+```
+
+#### 2. Get User ID yang Online
+```bash
+curl http://localhost:9521/api/notification/socket/online-users
+```
+**Response:**
+```json
+{
+  "onlineUsers": []
+}
+```
+
+#### 3. Emit Event ke User Tertentu
+```bash
+curl -X POST http://localhost:9521/api/notification/socket/emit/user \
+  -H "Content-Type: application/json" \
+  -d '{
+    "userId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "event": "NEW_NOTIFICATION",
+    "payload": {
+      "id": "9bc8d7e6-f5a4-3210-9876-543210fedcba",
+      "title": "Transaksi Berhasil",
+      "message": "Pembayaran Anda sebesar Rp100.000 telah diterima."
+    }
+  }'
+```
+
+#### 4. Broadcast Event ke Semua Client
+```bash
+curl -X POST http://localhost:9521/api/notification/socket/emit/broadcast \
+  -H "Content-Type: application/json" \
+  -d '{
+    "event": "SYSTEM_ANNOUNCEMENT",
+    "payload": {
+      "message": "Pemeliharaan sistem terjadwal pukul 23:00 WIB malam ini."
+    }
+  }'
+```
+
+---
+
+### Integrasi Client (React Native)
+
+Berikut adalah contoh implementasi koneksi client menggunakan `socket.io-client` dengan autentikasi JWT:
+
+```javascript
+import { io } from 'socket.io-client';
+
+const socketUrl = 'http://localhost:9521'; // Ganti dengan URL gateway/server Anda
+const jwtToken = 'your_jwt_token_here'; // Ambil token dari AsyncStorage/SecureStore
+
+// 1. Inisialisasi koneksi dengan JWT
+const socket = io(socketUrl, {
+  path: '/socket.io',
+  auth: {
+    token: jwtToken
+  },
+  transports: ['websocket', 'polling'],
+  autoConnect: true,
+  reconnection: true,
+  reconnectionAttempts: 5,
+  reconnectionDelay: 1000,
+});
+
+// 2. Event Listeners
+socket.on('connect', () => {
+  console.log('Terhubung ke Socket.IO dengan socketId:', socket.id);
+});
+
+// Event otomatis dari server ketika autentikasi berhasil
+socket.on('connected', (data) => {
+  console.log('Data Autentikasi Server:', data);
+  // data.userId, data.room, data.socketId
+});
+
+// Event custom dari server
+socket.on('NEW_NOTIFICATION', (payload) => {
+  console.log('Notifikasi Realtime Baru:', payload);
+});
+
+// Mendengarkan broadcast sistem
+socket.on('SYSTEM_ANNOUNCEMENT', (payload) => {
+  console.log('Pengumuman Sistem:', payload.message);
+});
+
+// 3. Menguji koneksi dengan Ping-Pong
+const testPing = () => {
+  socket.emit('ping', { message: 'halo server' });
+};
+
+socket.on('pong', (data) => {
+  console.log('Menerima Pong dari Server:', data);
+});
+
+socket.on('connect_error', (error) => {
+  console.error('Koneksi Gagal:', error.message);
+  // error.data berisi info detail error, contoh: { code: 'TOKEN_EXPIRED' }
+});
+
+socket.on('disconnect', (reason) => {
+  console.log('Terputus dari Socket.IO. Alasan:', reason);
+});
+```
+
+---
+
 ## Database Schema
 
 ### `user_devices`
