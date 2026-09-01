@@ -43,6 +43,16 @@ const publishLogValidation = [
     .isString()
     .withMessage('curl must be a string'),
 
+  body('notes')
+    .optional()
+    .isString()
+    .withMessage('notes must be a string'),
+
+  body('created_at')
+    .optional()
+    .isString()
+    .withMessage('created_at must be a string'),
+
   body('created_by')
     .optional()
     .isString()

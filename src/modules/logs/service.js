@@ -22,6 +22,7 @@ const publishLog = async (data) => {
     status: data?.status,
     response: data?.response,
     curl: data?.curl,
+    notes: data?.notes,
     created_at: data?.created_at || now,
     created_by: data?.created_by,
     updated_at: data?.updated_at || now,
