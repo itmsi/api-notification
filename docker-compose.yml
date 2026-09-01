@@ -11,18 +11,18 @@ services:
       - .env
     restart: unless-stopped
     ports:
-      - "9521:9521"
+      - "9621:9621"
     volumes:
       - ./logs:/app/logs
       - ./public:/app/public
       - ./storages:/app/storages
     # Hanya override variables yang berbeda untuk Docker environment
-    # Semua variables lain (DB_HOST_PROD, DB_USER_PROD, REDIS_HOST, dll) 
+    # Semua variables lain (DB_HOST_PROD, DB_USER_PROD, REDIS_HOST, dll)
     # akan diambil dari file .env via env_file di atas
     environment:
       # Override untuk production server
       - NODE_ENV=production
-      - APP_PORT=9521
+      - APP_PORT=9621
       - SERVICE_NAME=api-notification
       - DATABASE_URL=${DATABASE_URL}?application_name=api-notification
       - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:-http://tempo:4318}
@@ -52,7 +52,13 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=false"
     healthcheck:
-      test: [ "CMD", "node", "-e", "require('http').get('http://localhost:9521/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })" ]
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "require('http').get('http://localhost:9621/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })",
+        ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -61,10 +67,10 @@ services:
       resources:
         limits:
           memory: 1G
-          cpus: '0.5'
+          cpus: "0.5"
         reservations:
           memory: 512M
-          cpus: '0.25'
+          cpus: "0.25"
 
 networks:
   infra_net:
