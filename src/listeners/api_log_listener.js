@@ -44,7 +44,7 @@ const buildTelegramText = (payload) => {
     `Method: ${escapeHtml(method)}`,
     `URL: ${escapeHtml(url)}`,
     `Status: ${escapeHtml(status)} (${escapeHtml(statusCode)})`,
-    createdAt ? `Created At: ${escapeHtml(createdAt)}` : null,
+    // createdAt ? `Created At: ${escapeHtml(createdAt)}` : null,
     requestPayload !== undefined
       ? `Payload: <code>${escapeJson(requestPayload)}</code>`
       : null,
